@@ -1,0 +1,149 @@
+<%@ page import="java.sql.*"%>
+
+<%
+String deliveryName=(String)session.getAttribute("delivery_name");
+
+if(deliveryName==null)
+{
+response.sendRedirect("deliverylogin.jsp");
+return;
+}
+%>
+
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Delivery Orders</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#fff8f0;
+}
+
+h2{
+text-align:center;
+color:#fc8019;
+}
+
+table{
+width:95%;
+margin:auto;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+border:1px solid gray;
+padding:10px;
+text-align:center;
+}
+
+th{
+background:#fc8019;
+color:white;
+}
+
+button{
+background:green;
+color:white;
+border:none;
+padding:8px 15px;
+cursor:pointer;
+}
+
+button:hover{
+background:darkgreen;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>Orders Ready For Delivery</h2>
+
+<table>
+
+<tr>
+
+<th>Order ID</th>
+<th>Customer</th>
+<th>Address</th>
+<th>Amount</th>
+<th>Payment</th>
+<th>Status</th>
+<th>Action</th>
+
+</tr>
+
+<%
+
+Class.forName("com.mysql.cj.jdbc.Driver");
+
+Connection con=DriverManager.getConnection(
+"jdbc:mysql://localhost:3306/food_ordering",
+"root",
+"");
+
+PreparedStatement ps=con.prepareStatement(
+
+"SELECT * FROM orders WHERE status='Out For Delivery'"
+
+);
+
+ResultSet rs=ps.executeQuery();
+
+while(rs.next())
+{
+
+%>
+
+<tr>
+
+<td><%=rs.getInt("order_id")%></td>
+
+<td><%=rs.getString("username")%></td>
+
+<td><%=rs.getString("address")%></td>
+
+<td>₹ <%=rs.getDouble("amount")%></td>
+
+<td><%=rs.getString("payment_mode")%></td>
+
+<td><%=rs.getString("status")%></td>
+
+<td>
+
+<a href="deliverorder.jsp?id=<%=rs.getInt("order_id")%>">
+
+<button>
+
+Delivered
+
+</button>
+
+</a>
+
+</td>
+
+</tr>
+
+<%
+
+}
+
+rs.close();
+ps.close();
+con.close();
+
+%>
+
+</table>
+
+</body>
+
+</html>
